@@ -19,12 +19,17 @@ NGINX_PKG_URL="http://nginx.org/packages";
 NGINX_CONF_DIR="/etc/nginx/conf.d"
 
 DISTRO=""
+CODENAME=""
 ## Redhat CentOS Oracle
 [ -f "/etc/redhat-release" ] && DISTRO=$(cat /etc/redhat-release  | cut -f 1 -d ' ' | tr '[:upper:]' '[:lower:]')
 ## Debian
 [ -f "/etc/debian_version" ] && DISTRO="debian"
 ## Ubuntu
-grep "ubuntu" /etc/apt/sources.list && DISTRO="ubuntu" 
+[ -f "/etc/os-release" ] && { 
+    DISTRO=$(egrep '^ID=' /etc/os-release | cut -d '=' -f 2); 
+    CODENAME=$(grep 'DISTRIB_CODENAME=' /etc/lsb-release | cut -d '=' -f 2);
+}
+
 
 if [ "$DISTRO" == "" ];then 
     echo "Could not determine OS distribution: $DISTRO";
@@ -42,9 +47,11 @@ install_nginx_rpm() {
 }
 
 install_nginx_deb() {    
-    ## TODO: prompt and read from stdin.
-    echo "Please enter $DISTRO codename: "
-    read CODENAME
+
+    if [ "$CODENAME" == "" ]; then
+        echo "Could not determine codename for $DISTRO!";
+        exit 2;
+    fi
 
     SOURCES_LIST="/etc/apt/sources.list";
     
