@@ -35,20 +35,24 @@ install_nginx_rpm() {
     }
 }
 
-install_nginx_deb() {
-    
+install_nginx_deb() {    
     ## TODO: prompt and read from stdin.
     # echo Please enter $DISTRO codename:
     CODENAME=${1:-"trusty"};
-
+    
     SOURCES_LIST="/etc/apt/sources.list";
     
+    ## Add nginx repo key
+    NGINX_KEY_NAME="nginx_signing.key";
+    NGINX_SGN_KEY="http://nginx.org/keys/$NGINX_KEY_NAME";
+    wget $NGINX_SGN_KEY && apt-key add $NGINX_KEY_NAME && rm -rf $NGINX_KEY_NAME;
+
     ## Add nginx repository
-    apt-key add "http://nginx.org/keys/nginx_signing.key";
     grep "$NGINX_SRC_URL" $SOURCES_LIST || { 
         echo -e "\ndeb ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\n" >> $SOURCES_LIST;
         apt-get update;
     }
+    
     ## Install nginx
     apt-get install -y nginx;
 }
