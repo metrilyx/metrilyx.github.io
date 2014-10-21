@@ -37,9 +37,9 @@ install_nginx_rpm() {
 
 install_nginx_deb() {    
     ## TODO: prompt and read from stdin.
-    # echo Please enter $DISTRO codename:
-    CODENAME=${1:-"trusty"};
-    
+    echo "Please enter $DISTRO codename: "
+    read CODENAME
+
     SOURCES_LIST="/etc/apt/sources.list";
     
     ## Add nginx repo key
