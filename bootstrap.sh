@@ -54,7 +54,7 @@ install_nginx_deb() {
 }
 
 install_nginx() {
-	if [[ ( "$DISTRO" == "centos" ) || ( "$DISTRO" == "oracle" ) || ( "$DISTRO" == "rhel" ) ]]; then
+	if [[ ( "$DISTRO" == "centos" ) || ( "$DISTRO" == "oracle" ) || ( "$DISTRO" == "rhel" ) || ( "$DISTRO" == "redhat" ) ]]; then
 		install_nginx_rpm;
 	else
 		install_nginx_deb;
