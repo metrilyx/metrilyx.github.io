@@ -22,12 +22,19 @@ NGINX_CONF_DIR="/etc/nginx/conf.d"
 METRILYX_SRC_URL="git+https://github.com/Ticketmaster/metrilyx-2.0.git";
 
 DISTRO=""
+CODENAME=""
 ## Redhat CentOS Oracle
 [ -f "/etc/redhat-release" ] && DISTRO=$(cat /etc/redhat-release  | cut -f 1 -d ' ' | tr '[:upper:]' '[:lower:]')
 ## Debian
 [ -f "/etc/debian_version" ] && DISTRO="debian"
+
 ## Ubuntu
-grep "ubuntu" /etc/apt/sources.list && DISTRO="ubuntu" 
+UBUNTU_RELEASE_FILE="/etc/lsb-release"
+[ -f "$UBUNTU_RELEASE_FILE" ] && { 
+    DISTRO=$(grep 'DISTRIB_ID=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2); 
+    CODENAME=$(grep 'DISTRIB_CODENAME=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2);
+}
+
 
 if [ "$DISTRO" == "" ];then 
     echo "Could not determine OS distribution: $DISTRO";
@@ -45,9 +52,11 @@ install_nginx_rpm() {
 }
 
 install_nginx_deb() {    
-    ## TODO: prompt and read from stdin.
-    echo "Please enter $DISTRO codename: "
-    read CODENAME
+
+    if [ "$CODENAME" == "" ]; then
+        echo "Could not determine codename for $DISTRO!";
+        exit 2;
+    fi
 
     SOURCES_LIST="/etc/apt/sources.list";
     
