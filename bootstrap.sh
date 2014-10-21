@@ -5,6 +5,12 @@
 #
 # THIS IS STILL IN PROGRESS - SPECIFICALLY FOR DEBIAN BASED SYSTEMS
 #
+# Boostrap
+#     curl http://metrilyx.github.io/bootstrap.sh | bash
+#
+# Bootstrap and Install
+#     curl http://metrilyx.github.io/bootstrap.sh | bash -s -- install
+#
 
 RPM_PKGS="git gcc gcc-c++ gcc-gfortran atlas-devel blas-devel libffi libffi-devel libuuid uuid python-setuptools python-devel";
 DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython-dev git-core libffi-dev libatlas-dev libblas-dev python-numpy"
@@ -88,7 +94,14 @@ bootstrap_metrilyx() {
 }
 
 install_metrilyx() {
-    pip install git+https://github.com/Ticketmaster/metrilyx-2.0.git
+    BRANCH="$1";
+    SRC_URL="git+https://github.com/Ticketmaster/metrilyx-2.0.git";
+
+    if [ "$branch" == "" ]; then
+        pip install $SRC_URL
+    else
+        pip install ${SRC_URL}@${BRANCH}
+    fi
 }
 
 
@@ -99,5 +112,6 @@ bootstrap_metrilyx;
 
 if [ "$1" == "install" ]; then
     echo " * Installing Metrilyx...";
-    install_metrilyx;
+    INSTALL_BRANCH=$2;
+    install_metrilyx $INSTALL_BRANCH;
 fi
