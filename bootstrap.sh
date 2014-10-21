@@ -11,6 +11,7 @@
 # Bootstrap and Install
 #     curl http://metrilyx.github.io/bootstrap.sh | bash -s -- install
 #
+
 INSTALL_TIME=$(date '+%d%b%Y_%H%M%S');
 
 RPM_PKGS="git gcc gcc-c++ gcc-gfortran atlas-devel blas-devel libffi libffi-devel libuuid uuid python-setuptools python-devel";
@@ -19,7 +20,7 @@ DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev l
 NGINX_PKG_URL="http://nginx.org/packages";
 NGINX_CONF_DIR="/etc/nginx/conf.d"
 
-METRILYX_SRC_URL="git+https://github.com/Ticketmaster/metrilyx-2.0.git";
+METRILYX_SRC_URL="https://github.com/Ticketmaster/metrilyx-2.0";
 
 DISTRO=""
 CODENAME=""
@@ -109,9 +110,9 @@ install_metrilyx() {
     BRANCH="$1";
 
     if [ "$BRANCH" == "" ]; then
-        pip install $METRILYX_SRC_URL
+        pip install "git+${METRILYX_SRC_URL}.git"
     else
-        pip install ${METRILYX_SRC_URL}@${BRANCH}
+        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}"
     fi
 }
 
