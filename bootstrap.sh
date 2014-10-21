@@ -9,35 +9,44 @@
 RPM_PKGS="git gcc gcc-c++ gcc-gfortran atlas-devel blas-devel libffi libffi-devel libuuid uuid python-setuptools python-devel";
 DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython-dev git-core libffi-dev libatlas-dev libblas-dev python-numpy"
 
+NGINX_PKG_URL="http://nginx.org/packages";
 NGINX_CONF_DIR="/etc/nginx/conf.d"
 
 DISTRO=""
+## Redhat CentOS Oracle
 [ -f "/etc/redhat-release" ] && DISTRO=$(cat /etc/redhat-release  | cut -f 1 -d ' ' | tr '[:upper:]' '[:lower:]')
-
+## Debian
 [ -f "/etc/debian_version" ] && DISTRO="debian"
+## Ubuntu
 grep "ubuntu" /etc/apt/sources.list && DISTRO="ubuntu" 
 
-echo "Distribution: $DISTRO"
+if [ "$DISTRO" == "" ];then 
+	echo "Could not determine OS distribution: $DISTRO";
+	exit 1;
+else
+	echo "Distribution: $DISTRO";
+fi
 
 install_nginx_rpm() {
     ## DISTRO: centos, oracle, rhel
-	rpm -qa | grep 'nginx-release' || { yum -y install "http://nginx.org/packages/${DISTRO}/6/noarch/RPMS/nginx-release-${DISTRO}-6-0.el6.ngx.noarch.rpm" && yum -y install nginx;
+	rpm -qa | grep 'nginx-release' || { 
+		yum -y install "${NGINX_PKG_URL}/${DISTRO}/6/noarch/RPMS/nginx-release-${DISTRO}-6-0.el6.ngx.noarch.rpm" && yum -y install nginx;
 		chkconfig nginx on;
 	}
 }
 
 install_nginx_deb() {
-		
+	
+	## TODO: prompt and read from stdin.
+	# echo Please enter $DISTRO codename:
 	CODENAME=${1:-"trusty"};
 
 	SOURCES_LIST="/etc/apt/sources.list";
-	NGINX_SRC_URL="http://nginx.org/packages";
-
-	apt-key add "http://nginx.org/keys/nginx_signing.key";
-    
+	
     ## Add nginx repository
+	apt-key add "http://nginx.org/keys/nginx_signing.key";
 	grep "$NGINX_SRC_URL" $SOURCES_LIST || { 
-	    echo -e "\ndeb ${NGINX_SRC_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_SRC_URL}/${DISTRO}/ ${CODENAME} nginx\n" >> $SOURCES_LIST;
+	    echo -e "\ndeb ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\n" >> $SOURCES_LIST;
 	    apt-get update;
     }
     ## Install nginx
@@ -50,7 +59,7 @@ install_nginx() {
 	else
 		install_nginx_deb;
 	fi
-	[ -f "/etc/nginx/conf.d/default.conf" ] && mv ${NGINX_CONF_DIR}/default.conf ${NGINX_CONF_DIR}/default.conf.disabled;
+	[ -f "${NGINX_CONF_DIR}/default.conf" ] && mv ${NGINX_CONF_DIR}/default.conf ${NGINX_CONF_DIR}/default.conf.disabled;
 }
 
 bootstrap_metrilyx_rpm() {
@@ -64,7 +73,7 @@ bootstrap_metrilyx_deb() {
 }
 
 bootstrap_metrilyx() {
-	if [[ ( "$DISTRO" == "centos" ) || ( "$DISTRO" == "oracle" ) || ( "$DISTRO" == "rhel" ) ]]; then
+	if [[ ( "$DISTRO" == "centos" ) || ( "$DISTRO" == "oracle" ) || ( "$DISTRO" == "rhel" ) || ( "$DISTRO" == "redhat" ) ]]; then
 		bootstrap_metrilyx_rpm;
 	    which pip || easy_install pip;
 	    pip install "numpy>=1.6.1";    
