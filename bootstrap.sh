@@ -49,7 +49,6 @@ NGINX_CONF_DIR="/etc/nginx/conf.d";
 NGINX_DEFAULT_CONF="${NGINX_CONF_DIR}/default.conf";
 NGINX_REPO_RPM_URL="${NGINX_PKG_URL}/${DISTRO}/6/noarch/RPMS/nginx-release-${DISTRO}-6-0.el6.ngx.noarch.rpm";
 
-
 install_nginx_rpm() {
     ## DISTRO: centos, oracle, rhel
     [ -f "/etc/yum.repos.d/nginx.repo" ] || { 
@@ -65,16 +64,15 @@ install_nginx_deb() {
         exit 2;
     fi
 
-    SOURCES_LIST="/etc/apt/sources.list";
+    NGINX_SOURCES_LIST="/etc/apt/sources.list.d/nginx.list";
     
     ## Add nginx repo key
     NGINX_KEY_NAME="nginx_signing.key";
     NGINX_SGN_KEY="http://nginx.org/keys/$NGINX_KEY_NAME";
     
-    ## Add nginx repository
-    grep "$NGINX_SRC_URL" $SOURCES_LIST || { 
+    [ -f "$NGINX_SOURCES_LIST" ] || {
         wget "$NGINX_SGN_KEY" && apt-key add $NGINX_KEY_NAME && rm -rf $NGINX_KEY_NAME;
-        echo -e "\ndeb ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\n" >> $SOURCES_LIST;
+        echo -e "\ndeb ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\n" > $NGINX_SOURCES_LIST;
         apt-get update;
     }
     
