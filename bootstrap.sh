@@ -24,10 +24,17 @@ METRILYX_SRC_URL="https://github.com/Ticketmaster/metrilyx-2.0";
 
 DISTRO=""
 CODENAME=""
-## Redhat CentOS Oracle
-[ -f "/etc/redhat-release" ] && DISTRO=$(cat /etc/redhat-release  | cut -f 1 -d ' ' | tr '[:upper:]' '[:lower:]')
+## Redhat, CentOS
+[ -f "/etc/redhat-release" ] && {
+    DISTRO=$(cat /etc/redhat-release  | cut -f 1 -d ' ' | tr '[:upper:]' '[:lower:]');
+    if [ "$DISTRO" == "red" ]; then
+        DISTRO="redhat"
+    fi
+}
+## Oracle
+[ -f "/etc/oracle-release" ] && { DISTRO="oracle" }
 ## Debian
-[ -f "/etc/debian_version" ] && DISTRO="debian"
+[ -f "/etc/debian_version" ] && { DISTRO="debian" }
 
 ## Ubuntu
 UBUNTU_RELEASE_FILE="/etc/lsb-release"
