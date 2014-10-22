@@ -32,9 +32,9 @@ CODENAME=""
     fi
 }
 ## Oracle
-[ -f "/etc/oracle-release" ] && { DISTRO="oracle" }
+[ -f "/etc/oracle-release" ] && DISTRO="oracle";
 ## Debian
-[ -f "/etc/debian_version" ] && { DISTRO="debian" }
+[ -f "/etc/debian_version" ] && DISTRO="debian";
 
 ## Ubuntu
 UBUNTU_RELEASE_FILE="/etc/lsb-release"
