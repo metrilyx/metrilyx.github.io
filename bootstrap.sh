@@ -17,9 +17,6 @@ INSTALL_TIME=$(date '+%d%b%Y_%H%M%S');
 RPM_PKGS="git gcc gcc-c++ gcc-gfortran atlas-devel blas-devel libffi libffi-devel libuuid uuid python-setuptools python-devel";
 DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython-dev git-core libffi-dev libatlas-dev libblas-dev python-numpy"
 
-NGINX_PKG_URL="http://nginx.org/packages";
-NGINX_CONF_DIR="/etc/nginx/conf.d"
-
 METRILYX_SRC_URL="https://github.com/Ticketmaster/metrilyx-2.0";
 
 DISTRO=""
@@ -27,22 +24,18 @@ CODENAME=""
 ## Redhat, CentOS
 [ -f "/etc/redhat-release" ] && {
     DISTRO=$(cat /etc/redhat-release  | cut -f 1 -d ' ' | tr '[:upper:]' '[:lower:]');
-    if [ "$DISTRO" == "red" ]; then
-        DISTRO="redhat"
-    fi
+    if [ "$DISTRO" == "red" ]; then DISTRO="redhat"; fi
 }
 ## Oracle
 [ -f "/etc/oracle-release" ] && DISTRO="oracle";
 ## Debian
 [ -f "/etc/debian_version" ] && DISTRO="debian";
-
 ## Ubuntu
 UBUNTU_RELEASE_FILE="/etc/lsb-release"
 [ -f "$UBUNTU_RELEASE_FILE" ] && { 
-    grep "DISTRIB_ID" $UBUNTU_RELEASE_FILE && DISTRO=$(grep 'DISTRIB_ID=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2); 
-    grep "DISTRIB_CODENAME" $UBUNTU_RELEASE_FILE && CODENAME=$(grep 'DISTRIB_CODENAME=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2);
+    grep "DISTRIB_ID" $UBUNTU_RELEASE_FILE && DISTRO=$(grep 'DISTRIB_ID=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]'); 
+    grep "DISTRIB_CODENAME" $UBUNTU_RELEASE_FILE && CODENAME=$(grep 'DISTRIB_CODENAME=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]');
 }
-
 
 if [ "$DISTRO" == "" ];then 
     echo "Could not determine OS distribution: $DISTRO";
@@ -51,10 +44,16 @@ else
     echo -e "\n Distribution: $DISTRO\n";
 fi
 
+NGINX_PKG_URL="http://nginx.org/packages";
+NGINX_CONF_DIR="/etc/nginx/conf.d";
+NGINX_DEFAULT_CONF="${NGINX_CONF_DIR}/default.conf";
+NGINX_REPO_RPM_URL="${NGINX_PKG_URL}/${DISTRO}/6/noarch/RPMS/nginx-release-${DISTRO}-6-0.el6.ngx.noarch.rpm";
+
+
 install_nginx_rpm() {
     ## DISTRO: centos, oracle, rhel
     [ -f "/etc/yum.repos.d/nginx.repo" ] || { 
-        yum -y install "${NGINX_PKG_URL}/${DISTRO}/6/noarch/RPMS/nginx-release-${DISTRO}-6-0.el6.ngx.noarch.rpm" && yum -y install nginx;
+        yum -y install "$NGINX_REPO_RPM_URL" && yum -y install nginx;
         chkconfig nginx on;
     }
 }
@@ -71,10 +70,10 @@ install_nginx_deb() {
     ## Add nginx repo key
     NGINX_KEY_NAME="nginx_signing.key";
     NGINX_SGN_KEY="http://nginx.org/keys/$NGINX_KEY_NAME";
-    wget $NGINX_SGN_KEY && apt-key add $NGINX_KEY_NAME && rm -rf $NGINX_KEY_NAME;
-
+    
     ## Add nginx repository
     grep "$NGINX_SRC_URL" $SOURCES_LIST || { 
+        wget "$NGINX_SGN_KEY" && apt-key add $NGINX_KEY_NAME && rm -rf $NGINX_KEY_NAME;
         echo -e "\ndeb ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\n" >> $SOURCES_LIST;
         apt-get update;
     }
@@ -89,7 +88,7 @@ install_nginx() {
     else
         install_nginx_deb;
     fi
-    [ -f "${NGINX_CONF_DIR}/default.conf" ] && mv ${NGINX_CONF_DIR}/default.conf ${NGINX_CONF_DIR}/default.conf.disabled;
+    [ -f "$NGINX_DEFAULT_CONF" ] && mv "${NGINX_DEFAULT_CONF}" "${NGINX_DEFAULT_CONF}.disabled";
 }
 
 bootstrap_metrilyx_rpm() {
