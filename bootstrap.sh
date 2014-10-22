@@ -32,12 +32,12 @@ CODENAME=""
 [ -f "/etc/debian_version" ] && DISTRO="debian";
 ## Ubuntu
 UBUNTU_RELEASE_FILE="/etc/lsb-release"
-[ -f "$UBUNTU_RELEASE_FILE" ] && { 
-    grep "DISTRIB_ID" $UBUNTU_RELEASE_FILE && DISTRO=$(grep 'DISTRIB_ID=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]'); 
+[ -f "$UBUNTU_RELEASE_FILE" ] && {
+    grep "DISTRIB_ID" $UBUNTU_RELEASE_FILE && DISTRO=$(grep 'DISTRIB_ID=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]');
     grep "DISTRIB_CODENAME" $UBUNTU_RELEASE_FILE && CODENAME=$(grep 'DISTRIB_CODENAME=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]');
 }
 
-if [ "$DISTRO" == "" ];then 
+if [ "$DISTRO" == "" ];then
     echo "Could not determine OS distribution: $DISTRO";
     exit 1;
 else
@@ -51,13 +51,13 @@ NGINX_REPO_RPM_URL="${NGINX_PKG_URL}/${DISTRO}/6/noarch/RPMS/nginx-release-${DIS
 
 install_nginx_rpm() {
     ## DISTRO: centos, oracle, rhel
-    [ -f "/etc/yum.repos.d/nginx.repo" ] || { 
+    [ -f "/etc/yum.repos.d/nginx.repo" ] || {
         yum -y install "$NGINX_REPO_RPM_URL" && yum -y install nginx;
         chkconfig nginx on;
     }
 }
 
-install_nginx_deb() {    
+install_nginx_deb() {
 
     if [ "$CODENAME" == "" ]; then
         echo "Could not determine codename for $DISTRO!";
@@ -65,17 +65,17 @@ install_nginx_deb() {
     fi
 
     NGINX_SOURCES_LIST="/etc/apt/sources.list.d/nginx.list";
-    
+
     ## Add nginx repo key
     NGINX_KEY_NAME="nginx_signing.key";
     NGINX_SGN_KEY="http://nginx.org/keys/$NGINX_KEY_NAME";
-    
+
     [ -f "$NGINX_SOURCES_LIST" ] || {
         wget "$NGINX_SGN_KEY" && apt-key add $NGINX_KEY_NAME && rm -rf $NGINX_KEY_NAME;
         echo -e "\ndeb ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\n" > $NGINX_SOURCES_LIST;
         apt-get update;
     }
-    
+
     ## Install nginx
     apt-get install -y nginx;
 }
@@ -93,7 +93,7 @@ bootstrap_metrilyx_rpm() {
     for PKG in $RPM_PKGS; do
         rpm -qa | grep $PKG || yum -y install $PKG
     done
-}   
+}
 
 bootstrap_metrilyx_deb() {
     apt-get install -y $DEB_PKGS;
@@ -103,20 +103,28 @@ bootstrap_metrilyx() {
     if [[ ( "$DISTRO" == "centos" ) || ( "$DISTRO" == "oracle" ) || ( "$DISTRO" == "rhel" ) || ( "$DISTRO" == "redhat" ) ]]; then
         bootstrap_metrilyx_rpm;
         which pip || easy_install pip;
-        pip install "numpy>=1.6.1";    
+        pip install "numpy>=1.6.1";
     else
         bootstrap_metrilyx_deb;
         which pip || easy_install pip;
     fi
 }
 
+copy_sample_configs() {
+    METRILYX_CFG= "/opt/metrilyx/etc/metrilyx/metrilyx.conf";
+    [ -f "$METRILYX_CFG" ] || cp -v "${METRILYX_CFG}.sample" "$METRILYX_CFG";
+
+    MET_CLIENT_CFG="/opt/metrilyx/www/config.json";
+    [ -f "$MET_CLIENT_CFG" ] || cp -v "${MET_CLIENT_CFG}.sample" "$MET_CLIENT_CFG";
+}
+
 install_metrilyx() {
     BRANCH="$1";
 
     if [ "$BRANCH" == "" ]; then
-        pip install "git+${METRILYX_SRC_URL}.git"
+        pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs;
     else
-        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}"
+        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs;
     fi
 }
 
