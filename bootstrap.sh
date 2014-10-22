@@ -39,8 +39,8 @@ CODENAME=""
 ## Ubuntu
 UBUNTU_RELEASE_FILE="/etc/lsb-release"
 [ -f "$UBUNTU_RELEASE_FILE" ] && { 
-    DISTRO=$(grep 'DISTRIB_ID=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2); 
-    CODENAME=$(grep 'DISTRIB_CODENAME=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2);
+    grep "DISTRIB_ID" $UBUNTU_RELEASE_FILE && DISTRO=$(grep 'DISTRIB_ID=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2); 
+    grep "DISTRIB_CODENAME" $UBUNTU_RELEASE_FILE && CODENAME=$(grep 'DISTRIB_CODENAME=' $UBUNTU_RELEASE_FILE | cut -d '=' -f 2);
 }
 
 
