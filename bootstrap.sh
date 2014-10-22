@@ -48,7 +48,7 @@ if [ "$DISTRO" == "" ];then
     echo "Could not determine OS distribution: $DISTRO";
     exit 1;
 else
-    echo "Distribution: $DISTRO";
+    echo -e "\n Distribution: $DISTRO\n";
 fi
 
 install_nginx_rpm() {
