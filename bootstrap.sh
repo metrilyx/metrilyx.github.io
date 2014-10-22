@@ -53,7 +53,7 @@ fi
 
 install_nginx_rpm() {
     ## DISTRO: centos, oracle, rhel
-    rpm -qa | grep 'nginx-release' || { 
+    [ -f "/etc/yum.repos.d/nginx.repo" ] || { 
         yum -y install "${NGINX_PKG_URL}/${DISTRO}/6/noarch/RPMS/nginx-release-${DISTRO}-6-0.el6.ngx.noarch.rpm" && yum -y install nginx;
         chkconfig nginx on;
     }
