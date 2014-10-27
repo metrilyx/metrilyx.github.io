@@ -113,7 +113,7 @@ bootstrap_metrilyx() {
 
 post_install_message() {
     CFGFILE=$1
-    echo -e "\n * Edit the configuration file:\n\t$CFGFILE\n * Start the metrilyx service:\n\t/etc/init.d/metrilyx start\n"
+    echo -e "\n * Edit the configuration file:\n\t$CFGFILE\n\n * Start the metrilyx service:\n\t/etc/init.d/metrilyx start\n"
 }
 
 copy_sample_configs() {
