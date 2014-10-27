@@ -110,21 +110,23 @@ bootstrap_metrilyx() {
     fi
 }
 
+post_install_message() {
+    CFGFILE=$1
+    echo -e "\n * Edit the configuration file: $CFGFILE\n * Start the metrilyx service: /etc/init.d/metrilyx start\n"
+}
+
 copy_sample_configs() {
     METRILYX_CFG="/opt/metrilyx/etc/metrilyx/metrilyx.conf";
     [ -f "$METRILYX_CFG" ] || cp -v "${METRILYX_CFG}.sample" "$METRILYX_CFG";
-
-    #MET_CLIENT_CFG="/opt/metrilyx/www/config.json";
-    #[ -f "$MET_CLIENT_CFG" ] || cp -v "${MET_CLIENT_CFG}.sample" "$MET_CLIENT_CFG";
 }
 
 install_metrilyx() {
     BRANCH="$1";
 
     if [ "$BRANCH" == "" ]; then
-        pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs;
+        pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs && post_install_message;
     else
-        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs;
+        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs && post_install_message;
     fi
 }
 
