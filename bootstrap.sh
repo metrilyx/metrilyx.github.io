@@ -18,6 +18,7 @@ RPM_PKGS="git gcc gcc-c++ gcc-gfortran atlas openblas-devel libffi libffi-devel 
 DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython-dev git-core libffi-dev libatlas-dev libblas-dev python-numpy"
 
 METRILYX_SRC_URL="https://github.com/Ticketmaster/metrilyx-2.0";
+METRILYX_CFG="/opt/metrilyx/etc/metrilyx/metrilyx.conf";
 
 DISTRO=""
 CODENAME=""
@@ -116,7 +117,6 @@ post_install_message() {
 }
 
 copy_sample_configs() {
-    METRILYX_CFG="/opt/metrilyx/etc/metrilyx/metrilyx.conf";
     [ -f "$METRILYX_CFG" ] || cp -v "${METRILYX_CFG}.sample" "$METRILYX_CFG";
 }
 
@@ -124,9 +124,9 @@ install_metrilyx() {
     BRANCH="$1";
 
     if [ "$BRANCH" == "" ]; then
-        pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs && post_install_message;
+        pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs && post_install_message $METRILYX_CFG;
     else
-        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs && post_install_message;
+        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs && post_install_message $METRILYX_CFG;
     fi
 }
 
