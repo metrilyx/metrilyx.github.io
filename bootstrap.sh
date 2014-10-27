@@ -111,7 +111,7 @@ bootstrap_metrilyx() {
 }
 
 copy_sample_configs() {
-    METRILYX_CFG= "/opt/metrilyx/etc/metrilyx/metrilyx.conf";
+    METRILYX_CFG="/opt/metrilyx/etc/metrilyx/metrilyx.conf";
     [ -f "$METRILYX_CFG" ] || cp -v "${METRILYX_CFG}.sample" "$METRILYX_CFG";
 
     #MET_CLIENT_CFG="/opt/metrilyx/www/config.json";
