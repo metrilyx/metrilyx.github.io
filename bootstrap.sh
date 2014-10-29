@@ -19,6 +19,7 @@ DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev l
 
 METRILYX_SRC_URL="https://github.com/Ticketmaster/metrilyx-2.0";
 METRILYX_CFG="/opt/metrilyx/etc/metrilyx/metrilyx.conf";
+METRILYX_DEFAULT_DB="/opt/metrilyx/data/metrilyx.sqlite3";
 
 DISTRO=""
 CODENAME=""
@@ -118,6 +119,7 @@ post_install_message() {
 
 copy_sample_configs() {
     [ -f "$METRILYX_CFG" ] || cp -v "${METRILYX_CFG}.sample" "$METRILYX_CFG";
+    [ -f "$METRILYX_DEFAULT_DB" ] || cp -v "${METRILYX_DEFAULT_DB}.default" "$METRILYX_DEFAULT_DB";
 }
 
 install_metrilyx() {
