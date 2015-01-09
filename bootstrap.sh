@@ -93,9 +93,7 @@ install_nginx() {
 }
 
 bootstrap_metrilyx_rpm() {
-    for PKG in $RPM_PKGS; do
-        rpm -qa | grep $PKG || yum -y install $PKG
-    done
+    yum -y install $PKG
 }
 
 bootstrap_metrilyx_deb() {
