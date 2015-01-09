@@ -17,7 +17,10 @@ INSTALL_TIME=$(date '+%d%b%Y_%H%M%S');
 RPM_PKGS="git gcc gcc-c++ gcc-gfortran atlas-devel blas-devel libffi libffi-devel libuuid uuid python-setuptools python-devel";
 DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython-dev python-pip git-core libffi-dev libatlas-dev libblas-dev python-numpy"
 
+
 METRILYX_SRC_URL="https://github.com/Ticketmaster/metrilyx-2.0";
+METRILYX_CFG="/opt/metrilyx/etc/metrilyx/metrilyx.conf";
+METRILYX_DEFAULT_DB="/opt/metrilyx/data/metrilyx.sqlite3";
 
 DISTRO=""
 CODENAME=""
@@ -110,21 +113,23 @@ bootstrap_metrilyx() {
     fi
 }
 
-copy_sample_configs() {
-    METRILYX_CFG= "/opt/metrilyx/etc/metrilyx/metrilyx.conf";
-    [ -f "$METRILYX_CFG" ] || cp -v "${METRILYX_CFG}.sample" "$METRILYX_CFG";
+post_install_message() {
+    CFGFILE=$1
+    echo -e "\n * Edit the configuration file:\n\t$CFGFILE\n\n * Start the metrilyx service:\n\t/etc/init.d/metrilyx start\n"
+}
 
-    MET_CLIENT_CFG="/opt/metrilyx/www/config.json";
-    [ -f "$MET_CLIENT_CFG" ] || cp -v "${MET_CLIENT_CFG}.sample" "$MET_CLIENT_CFG";
+copy_sample_configs() {
+    [ -f "$METRILYX_CFG" ] || cp -v "${METRILYX_CFG}.sample" "$METRILYX_CFG";
+    [ -f "$METRILYX_DEFAULT_DB" ] || cp -v "${METRILYX_DEFAULT_DB}.default" "$METRILYX_DEFAULT_DB";
 }
 
 install_metrilyx() {
     BRANCH="$1";
 
     if [ "$BRANCH" == "" ]; then
-        pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs;
+        pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs && post_install_message $METRILYX_CFG;
     else
-        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs;
+        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs && post_install_message $METRILYX_CFG;
     fi
 }
 
