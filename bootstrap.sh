@@ -93,7 +93,7 @@ install_nginx() {
 }
 
 bootstrap_metrilyx_rpm() {
-    yum -y install $PKG
+    yum -y install $RPM_PKG
 }
 
 bootstrap_metrilyx_deb() {
