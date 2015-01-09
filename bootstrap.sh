@@ -109,7 +109,7 @@ bootstrap_metrilyx() {
         pip install "numpy>=1.6.1";
     else
         bootstrap_metrilyx_deb;
-        which pip || easy_install pip;
+        #which pip || easy_install pip;
     fi
 }
 
