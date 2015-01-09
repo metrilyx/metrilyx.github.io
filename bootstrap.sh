@@ -15,7 +15,7 @@
 INSTALL_TIME=$(date '+%d%b%Y_%H%M%S');
 
 RPM_PKGS="git gcc gcc-c++ gcc-gfortran atlas-devel blas-devel libffi libffi-devel libuuid uuid python-setuptools python-devel";
-DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython-dev python-pip git-core libffi-dev libatlas-dev libblas-dev python-numpy"
+DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython2.7 python-pip git-core libffi-dev libatlas-dev libblas-dev python-numpy"
 
 
 METRILYX_SRC_URL="https://github.com/Ticketmaster/metrilyx-2.0";
