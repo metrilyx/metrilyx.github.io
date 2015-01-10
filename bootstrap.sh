@@ -75,7 +75,7 @@ install_nginx_deb() {
 
     [ -f "$NGINX_SOURCES_LIST" ] || {
         wget "$NGINX_SGN_KEY" && sudo apt-key add $NGINX_KEY_NAME && rm -rf $NGINX_KEY_NAME;
-        echo -e "\ndeb ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\n" > $NGINX_SOURCES_LIST;
+        sudo sh -c 'echo -e "\ndeb ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\ndeb-src ${NGINX_PKG_URL}/${DISTRO}/ ${CODENAME} nginx\n" > $NGINX_SOURCES_LIST'
         sudo apt-get update -qq;
     }
 
