@@ -97,6 +97,7 @@ bootstrap_metrilyx_rpm() {
 }
 
 bootstrap_metrilyx_deb() {
+    sudo apt-get update -qq
     sudo apt-get install -y $DEB_PKGS;
 }
 
