@@ -15,7 +15,7 @@
 INSTALL_TIME=$(date '+%d%b%Y_%H%M%S');
 
 RPM_PKGS="git gcc gcc-c++ gcc-gfortran atlas-devel blas-devel libffi libffi-devel libuuid uuid python-setuptools python-devel";
-DEB_PKGS="make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython2.7 python-pip git-core libffi-dev libatlas-dev libblas-dev python-numpy"
+DEB_PKGS="build-essential make g++ gfortran libuuid1 uuid-runtime python-setuptools python-dev libpython2.7 python-pip git-core libffi-dev libatlas-dev libblas-dev python-numpy"
 
 
 METRILYX_SRC_URL="https://github.com/Ticketmaster/metrilyx-2.0";
@@ -122,12 +122,16 @@ copy_sample_configs() {
 }
 
 install_metrilyx() {
-    BRANCH="$1";
 
-    if [ "$BRANCH" == "" ]; then
-        pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs && post_install_message $METRILYX_CFG;
-    else
-        pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs && post_install_message $METRILYX_CFG;
+    if [ "$1" == "install" ]; then
+        echo " * Installing Metrilyx...";
+        BRANCH=$2;
+        
+        if [ "$BRANCH" == "" ]; then
+            pip install "git+${METRILYX_SRC_URL}.git" && copy_sample_configs && post_install_message $METRILYX_CFG;
+        else
+            pip install "git+${METRILYX_SRC_URL}.git@${BRANCH}" && copy_sample_configs && post_install_message $METRILYX_CFG;
+        fi
     fi
 }
 
@@ -135,10 +139,8 @@ install_metrilyx() {
 #### Main ####
 
 install_nginx;
+
 bootstrap_metrilyx;
 
-if [ "$1" == "install" ]; then
-    echo " * Installing Metrilyx...";
-    INSTALL_BRANCH=$2;
-    install_metrilyx $INSTALL_BRANCH;
-fi
+install_metrilyx;
+
