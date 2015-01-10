@@ -101,6 +101,9 @@ bootstrap_metrilyx_deb() {
 }
 
 bootstrap_metrilyx() {
+    if [ "$1" != "nonginx" ]; then 
+        install_nginx
+    fi
     if [[ ( "$DISTRO" == "centos" ) || ( "$DISTRO" == "oracle" ) || ( "$DISTRO" == "rhel" ) || ( "$DISTRO" == "redhat" ) ]]; then
         bootstrap_metrilyx_rpm;
         which pip || easy_install pip;
@@ -138,9 +141,7 @@ install_metrilyx() {
 
 #### Main ####
 
-install_nginx;
-
-bootstrap_metrilyx;
+bootstrap_metrilyx $1;
 
 # params
 #   1 'install'
