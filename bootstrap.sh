@@ -122,7 +122,6 @@ copy_sample_configs() {
 }
 
 install_metrilyx() {
-
     if [ "$1" == "install" ]; then
         echo " * Installing Metrilyx...";
         BRANCH=$2;
@@ -142,5 +141,9 @@ install_nginx;
 
 bootstrap_metrilyx;
 
-install_metrilyx;
+# params
+#   1 'install'
+#   2  git branch/tag
+#
+install_metrilyx $1 $2;
 
