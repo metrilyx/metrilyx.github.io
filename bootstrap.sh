@@ -50,7 +50,7 @@ fi
 NGINX_PKG_URL="http://nginx.org/packages";
 NGINX_CONF_DIR="/etc/nginx/conf.d";
 NGINX_DEFAULT_CONF="${NGINX_CONF_DIR}/default.conf";
-NGINX_REPO_RPM_URL="${NGINX_PKG_URL}/${DISTRO}/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm";
+NGINX_REPO_RPM_URL="${NGINX_PKG_URL}/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm";
 
 install_nginx_rpm() {
     ## DISTRO: centos, oracle, rhel
